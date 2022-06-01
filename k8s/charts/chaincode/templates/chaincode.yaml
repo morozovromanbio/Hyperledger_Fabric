@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        name: "{{ .Release.Name }}"
+    spec:
+      containers:
+        - name: "{{ .Release.Name }}"
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CHAINCODE_SERVER_ADDRESS
+              value: "0.0.0.0:{{ .Values.chaincode.port }}"
+            - name: CHAINCODE_ID
+              value: "{{ .Values.chaincode.id }}"
+          ports:
+            - containerPort: {{ .Values.chaincode.port }}
